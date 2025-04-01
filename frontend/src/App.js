@@ -37,7 +37,7 @@ const App = () => {
         formData.append("font", options.font);
 
         try {
-            const response = await axios.post("http://45.248.65.97:5000/api/process", formData, {
+            const response = await axios.post("http://localhost:5000/api/process", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             setAsciiArt(response.data.asciiArt);
