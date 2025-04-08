@@ -1,7 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const asciifyImage = require("asciify-image");
-const stripAnsi = require("strip-ansi"); // Import strip-ansi to clean the output
+//const stripAnsi = require("strip-ansi"); // Import strip-ansi to clean the output
 const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
@@ -34,7 +34,10 @@ app.post("/api/process", upload.single("image"), (req, res) => {
         if (!exists) {
             return res.status(500).json({ error: "File not found" });
         }
-
+        function stripAnsiManually(str) {
+            const ansiRegex = /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g;
+            return str.replace(ansiRegex, '');
+          }
         // Process the image with asciify-image
         asciifyImage(imagePath, {
             width: width,  // Set the size (width)
@@ -44,7 +47,7 @@ app.post("/api/process", upload.single("image"), (req, res) => {
         })
             .then((asciiArt) => {
                 // Strip out the ANSI color codes
-                const cleanAsciiArt = stripAnsi(asciiArt);
+                const cleanAsciiArt = stripAnsiManually(asciiArt);
 
                 // Remove uploaded file after processing
                 fs.unlink(imagePath, (err) => {
@@ -64,4 +67,3 @@ app.post("/api/process", upload.single("image"), (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
-
