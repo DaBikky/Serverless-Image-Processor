@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "5000:5000"  # ✅ Match exposed port in backend Dockerfile
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - uploaded_images:/app/uploads
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "80:80"  # ✅ Nginx serves on 80 inside container
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  uploaded_images:
